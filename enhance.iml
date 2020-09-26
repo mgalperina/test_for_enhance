@@ -753,6 +753,8 @@
     <orderEntry type="library" scope="TEST" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:2.3.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: jakarta.activation:jakarta.activation-api:1.2.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.sun.xml.bind:jaxb-impl:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: com.github.scribejava:scribejava-apis:2.5.3" level="project" />
+    <orderEntry type="library" name="Maven: com.github.scribejava:scribejava-core:2.5.3" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.3.0" level="project" />
   </component>
 </module>
