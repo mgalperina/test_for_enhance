@@ -1,16 +1,17 @@
 package API_Tests;
 
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.restassured.response.Response;
 import kotlin.text.Regex;
 import org.apache.http.auth.AuthenticationException;
 
 
 public class TradeMeMotorsStepDefinition_API {
-    private String oAuthToken;
-    private String oAuthTokenSecret;
-    private Boolean oAuthCallbackConfirmed;
+    private String oAuthTmpToken;
+    private String oAuthTmpTokenSecret;
+    private Boolean oAuthTmpCallbackConfirmed;
+    private Response response;
 
     public TradeMeMotorsStepDefinition_API() throws AuthenticationException {
 
@@ -24,30 +25,30 @@ public class TradeMeMotorsStepDefinition_API {
                 .getGroups()
                 .get(2) // the value
                 .getValue();
+
     }
 
     private void setupTempTokens() throws AuthenticationException {
+
         String tokenStr = RestAssuredTests_API.requestToken();
 
-        oAuthToken = getValueOf("oauth_token", tokenStr);
-        oAuthTokenSecret = getValueOf("oauth_token_secret", tokenStr);
-        oAuthCallbackConfirmed = Boolean.parseBoolean(getValueOf("oauth_callback_confirmed", tokenStr));
-    }
-
-    @Given("I perform GET operation for {string}")
-    public void iPerformGETOperationFor(String arg0) {
+        oAuthTmpToken = getValueOf("oauth_token", tokenStr);
+        oAuthTmpTokenSecret = getValueOf("oauth_token_secret", tokenStr);
+        oAuthTmpCallbackConfirmed = Boolean.parseBoolean(getValueOf("oauth_callback_confirmed", tokenStr));
 
     }
 
     @When("I query Used cars category")
-    public void i_query_Used_cars_category() throws AuthenticationException {
+    public void iQueryUsedCarCategory() throws AuthenticationException {
 
-        RestAssuredTests_API.test_Used_Cars_Returns_Results(oAuthToken, oAuthTokenSecret);
+        this.response = RestAssuredTests_API.queryUsedCars(oAuthTmpToken, oAuthTmpTokenSecret);
 
     }
 
     @Then("At least one search result is returned")
-    public void at_least_one_search_result_is_returned() {
+    public void atLeastOneSearchResultIsReturned() throws AuthenticationException {
+
+        RestAssuredTests_API.testReturnsResults(response);
 
     }
 
@@ -55,21 +56,29 @@ public class TradeMeMotorsStepDefinition_API {
     @When("I query Used cars category search")
     public void iQueryUsedCarsCategorySearch() throws AuthenticationException {
 
-        RestAssuredTests_API.test_Used_Cars_Returns_Kia_Make(oAuthToken, oAuthTokenSecret);
+        this.response = RestAssuredTests_API.queryUsedCarsCategory(oAuthTmpToken, oAuthTmpTokenSecret);
+
     }
 
     @Then("I can see Kia make is returned")
-    public void iCanSeeKiaMakeIsReturned() {
+    public void iCanSeeKiaMakeIsReturned() throws AuthenticationException {
+
+        RestAssuredTests_API.testReturnsKia(response);
+
     }
 
     @When("I query a listing in Used cars category")
     public void iQueryAListingInUsedCarsCategory()  throws AuthenticationException {
 
-        RestAssuredTests_API.test_Listing_Returns_Attributes(oAuthToken, oAuthTokenSecret);
+        this.response = RestAssuredTests_API.queryListingAttributes(oAuthTmpToken, oAuthTmpTokenSecret);
+
     }
 
     @Then("The attributes are returned")
-    public void theAttributesAreReturned() {
+    public void theAttributesAreReturned()throws AuthenticationException {
+
+        RestAssuredTests_API.testListingReturnsAttributes(response);
+
     }
 
 

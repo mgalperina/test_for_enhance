@@ -10,8 +10,6 @@ import org.apache.http.auth.AuthenticationException;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-
-
 public class RestAssuredTests_API {
 
     static String consumerKey = "7398B39A465F4B8863B0FFA73B1763DC";
@@ -20,6 +18,7 @@ public class RestAssuredTests_API {
     static String requestTokenUrl = "https://secure.tmsandbox.co.nz/Oauth/RequestToken?scope=MyTradeMeRead";
 
     public static String requestToken() throws AuthenticationException {
+
         Response response = given()
                 .auth()
                 .oauth(consumerKey, consumerSecret, "", "", OAuthSignature.HEADER)
@@ -28,12 +27,15 @@ public class RestAssuredTests_API {
 
         if(response.getStatusCode() != 200) {
             throw new AuthenticationException("Error trying to get OAuth token");
+
         }
 
         return response.body().prettyPrint();
+
     }
 
     public static String getHeader(String oAuthToken, String oAuthTokenSecret) {
+
         String prefix = "oauth_version=\"1.0\",oauth_signature_method=\"PLAINTEXT\"";
 
         return String.format(
@@ -45,39 +47,52 @@ public class RestAssuredTests_API {
                 (Math.random() * 100000000));
     }
 
-    public static void test_Used_Cars_Returns_Results (String oAuthToken, String oAuthTokenSecret) throws AuthenticationException {
-       given()
+    public static Response queryUsedCars (String oAuthToken, String oAuthTokenSecret) throws AuthenticationException {
+
+        return given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", getHeader(oAuthToken, oAuthTokenSecret))
                 .when()
-                .get("https://api.tmsandbox.co.nz/v1/Search/Motors/Used.json")
-                .then()
+                .get("https://api.tmsandbox.co.nz/v1/Search/Motors/Used.json");
+    }
+
+    public static void testReturnsResults (Response response) throws AuthenticationException {
+
+        response.then()
                 .assertThat()
                 .statusCode(200)
-                .body("TotalCount", equalTo(1));
-
+                .body("TotalCount", greaterThanOrEqualTo(1));
     }
 
-    public static void test_Used_Cars_Returns_Kia_Make(String oAuthToken, String oAuthTokenSecret) throws AuthenticationException {
+    public static Response queryUsedCarsCategory(String oAuthToken, String oAuthTokenSecret) throws AuthenticationException {
 
-        given()
+        return given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", getHeader(oAuthToken, oAuthTokenSecret))
                 .when()
-                .get("https://api.tmsandbox.co.nz/v1/Categories/UsedCars.json")
-                .then()
+                .get("https://api.tmsandbox.co.nz/v1/Categories/UsedCars.json");
+    }
+
+    public static void testReturnsKia (Response response) throws AuthenticationException {
+
+        response.then()
+                .statusCode(200)
                 .body(containsString("Kia"));
-
     }
 
-    public static void test_Listing_Returns_Attributes(String oAuthToken, String oAuthTokenSecret) {
+    public static Response queryListingAttributes(String oAuthToken, String oAuthTokenSecret) throws AuthenticationException {
 
-        given()
+        return given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", getHeader(oAuthToken, oAuthTokenSecret))
                 .when()
-                .get("https://api.tmsandbox.co.nz/v1/Listings/2149189245.json")
-                .then()
+                .get("https://api.tmsandbox.co.nz/v1/Listings/2149189245.json");
+    }
+
+    public static void testListingReturnsAttributes (Response response) throws AuthenticationException {
+
+        response.then()
+                .statusCode(200)
                 .using()
                 .defaultParser(Parser.JSON)
                 .assertThat()
@@ -86,6 +101,5 @@ public class RestAssuredTests_API {
                 .body(containsString("kilometres"))
                 .body(containsString("fuel_type"))
                 .body(containsString("fuel_economy_stars"));
-
     }
 }

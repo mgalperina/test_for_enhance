@@ -12,7 +12,6 @@ Feature: Testing Trade Me Motors UI
 
 
 
-
   Scenario: Check the make "Kia" exists in a Used Cars category
 
     Given Open Firefox browser

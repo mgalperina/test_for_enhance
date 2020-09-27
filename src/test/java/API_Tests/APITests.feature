@@ -2,8 +2,6 @@ Feature: Testing Trade Me Motors API
 
   Scenario: Verify Used Cars category has more than one search result
 
-    Given I perform GET operation for "/get"
-
     When I query Used cars category
 
     Then At least one search result is returned
